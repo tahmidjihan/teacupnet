@@ -11,6 +11,8 @@ interface valueType {
   loginUser: (email: string, password: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   updateUserCompanyInfo: (data: CompanyData) => Promise<void>;
+  sendEmailVerificationOtp: () => Promise<void>;
+  verifyEmailOtp: (otp: string) => Promise<void>;
   logout: () => Promise<void> | void;
 }
 
@@ -145,6 +147,50 @@ export default function AuthProviderBetterAuth({
     }
   }
 
+  async function sendEmailVerificationOtp(): Promise<void> {
+    try {
+      if (!user || user === 'userNotFound') {
+        throw new Error('User not found');
+      }
+      const { error } = await authClient.emailOtp.sendVerificationOtp({
+        email: user.email,
+        type: 'email-verification',
+      });
+
+      if (error) {
+        throw new Error(error.message || 'Failed to send verification code');
+      }
+    } catch (error: any) {
+      console.error('Send email verification OTP error:', error);
+      throw error;
+    }
+  }
+
+  async function verifyEmailOtp(otp: string): Promise<void> {
+    try {
+      if (!user || user === 'userNotFound') {
+        throw new Error('User not found');
+      }
+      const { error } = await authClient.emailOtp.verifyEmail({
+        email: user.email,
+        otp,
+      });
+
+      if (error) {
+        throw new Error(error.message || 'Invalid or expired code');
+      }
+
+      const { data: sessionData } = await authClient.getSession();
+      if (sessionData?.user) {
+        setSession(sessionData);
+        setUser(sessionData.user as User);
+      }
+    } catch (error: any) {
+      console.error('Verify email OTP error:', error);
+      throw error;
+    }
+  }
+
   async function logout() {
     try {
       await authClient.signOut();
@@ -164,6 +210,8 @@ export default function AuthProviderBetterAuth({
     loginUser,
     signInWithGoogle,
     updateUserCompanyInfo,
+    sendEmailVerificationOtp,
+    verifyEmailOtp,
     logout,
   };
 

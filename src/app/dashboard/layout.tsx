@@ -2,6 +2,7 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
 import { DashboardAuthGuard } from '@/components/dashboard-auth-guard';
 import { SiteHeader } from '@/components/site-header';
+import { EmailVerificationBanner } from '@/components/email-verification-banner';
 import { cn } from '@/lib/utils';
 
 export default function DashboardLayout({
@@ -39,6 +40,7 @@ export default function DashboardLayout({
               {/* Content wrapper with consistent spacing */}
               <div className='space-y-6 md:space-y-8'>
                 {/* Page header can be added here if needed */}
+                <EmailVerificationBanner />
 
                 {/* Main content */}
                 <div className='min-h-[calc(100vh-var(--header-height)-4rem)]'>
