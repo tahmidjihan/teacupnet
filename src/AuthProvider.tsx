@@ -13,6 +13,12 @@ interface valueType {
   updateUserCompanyInfo: (data: CompanyData) => Promise<void>;
   sendEmailVerificationOtp: () => Promise<void>;
   verifyEmailOtp: (otp: string) => Promise<void>;
+  requestPasswordResetOtp: (email: string) => Promise<void>;
+  resetPasswordWithOtp: (
+    email: string,
+    otp: string,
+    newPassword: string,
+  ) => Promise<void>;
   logout: () => Promise<void> | void;
 }
 
@@ -191,6 +197,42 @@ export default function AuthProviderBetterAuth({
     }
   }
 
+  async function requestPasswordResetOtp(email: string): Promise<void> {
+    try {
+      const { error } = await authClient.emailOtp.requestPasswordReset({
+        email,
+      });
+
+      if (error) {
+        throw new Error(error.message || 'Failed to send reset code');
+      }
+    } catch (error: any) {
+      console.error('Request password reset OTP error:', error);
+      throw error;
+    }
+  }
+
+  async function resetPasswordWithOtp(
+    email: string,
+    otp: string,
+    newPassword: string,
+  ): Promise<void> {
+    try {
+      const { error } = await authClient.emailOtp.resetPassword({
+        email,
+        otp,
+        password: newPassword,
+      });
+
+      if (error) {
+        throw new Error(error.message || 'Failed to reset password');
+      }
+    } catch (error: any) {
+      console.error('Reset password with OTP error:', error);
+      throw error;
+    }
+  }
+
   async function logout() {
     try {
       await authClient.signOut();
@@ -212,6 +254,8 @@ export default function AuthProviderBetterAuth({
     updateUserCompanyInfo,
     sendEmailVerificationOtp,
     verifyEmailOtp,
+    requestPasswordResetOtp,
+    resetPasswordWithOtp,
     logout,
   };
 

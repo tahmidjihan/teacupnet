@@ -6,11 +6,13 @@ import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { ForgotPasswordModal } from '@/components/forgot-password-modal';
 
 export default function AuthPage({ isLogin }: { isLogin: boolean }) {
   const { signUpUser, loginUser, user, signInWithGoogle } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -148,6 +150,7 @@ export default function AuthPage({ isLogin }: { isLogin: boolean }) {
                 {isLogin && (
                   <button
                     type='button'
+                    onClick={() => setForgotPasswordOpen(true)}
                     className='text-xs text-rose-500 hover:text-rose-600 font-medium'
                   >
                     Forgot password?
@@ -245,6 +248,12 @@ export default function AuthPage({ isLogin }: { isLogin: boolean }) {
           </button>
         </p>
       </div>
+
+      <ForgotPasswordModal
+        isOpen={forgotPasswordOpen}
+        onClose={() => setForgotPasswordOpen(false)}
+        initialEmail={formData.email}
+      />
     </div>
   );
 }
